@@ -1,0 +1,10 @@
+{
+  "module": "esnext",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@astrojs/ts-plugin"
+      }
+    ]
+  }
+}

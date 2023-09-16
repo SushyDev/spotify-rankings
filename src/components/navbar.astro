@@ -1,0 +1,28 @@
+---
+
+const hasData = Astro.cookies.has('data');
+
+const data = hasData ? Astro.cookies.get('data').json() : null;
+
+const isAuthenticated = Boolean(data);
+---
+
+<nav class="bg-white border-gray-200 dark:bg-green-500">
+    <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
+        <a href="#" class="flex items-center">
+            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-black">Spotify Rankin</span>
+        </a>
+        <div class:list={[ 'flex items-center', { hidden: isAuthenticated } ]}>
+            <a href="/api/login" class="text-sm  text-blue-600 dark:text-blue-500 hover:underline">Login</a>
+        </div>
+        <div class:list={[ 'flex items-center', { hidden: !isAuthenticated } ]}>
+            <a href="/api/logout" class="text-sm  text-blue-600 dark:text-black hover:underline">Logout</a>
+
+            <div class="flex items-center ml-4">
+                <span class="mr-2 text-black text-sm font-semibold">{data?.user?.display_name}</span>
+                <img src={data?.user?.image} class="h-8 w-8 rounded-full" alt="Avatar" />
+            </div>
+
+        </div>
+    </div>
+</nav>
