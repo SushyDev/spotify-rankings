@@ -16,6 +16,8 @@ const groups = user && await GroupModel.getAllByUser(user);
 
 	<h1 class="mt-4 font-bold">Groups:</h1>
 	<ul>
-		{ user && groups && groups.map((group) => ( <Group id={group.id.toString()} name={group.name} /> )) }
+		{ user && groups?.map((group) => (
+			<Group id={group.id.toString()} name={group.name} />
+		)) }
 	</ul>
 </Base>
