@@ -1,0 +1,16 @@
+---
+type Group = {
+    id: string;
+    name: string;
+}
+
+interface Props extends Group {}
+
+const { id, name } = Astro.props
+
+const groupUrl = `/group/${id}`
+---
+
+<li id={id}>
+    <a class="text-blue-500 underline" href={groupUrl}>{name}</a>
+</li>
