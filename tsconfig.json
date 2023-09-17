@@ -1,10 +1,18 @@
 {
-  "module": "esnext",
   "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
     "plugins": [
-      {
-        "name": "@astrojs/ts-plugin"
-      }
-    ]
+      { "name": "@astrojs/ts-plugin" }
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@utils/*": ["utils/*"],
+      "@models/*": ["models/*"]
+    }
   }
 }

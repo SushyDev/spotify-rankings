@@ -1,12 +1,7 @@
 /// <reference types="astro/client" />
 
-interface User {
-    id: string;
-    display_name: string;
-    image: string;
-}
-
-interface DataCookie {
-    user: User;
-    refresh_token: string;
+declare namespace App {
+    interface Locals {
+        user: import('@models/user').default | null;
+    }
 }

@@ -1,0 +1,78 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import User from '../../../models/user.js';
+import DB from '../../../utils/db.js';
+
+class Rating {
+    static async hasRated(
+        song_id: string,
+        user_id: string,
+        group_id: number,
+        playlist_id: string
+    ): Promise<boolean> {
+        const sql = 'SELECT * FROM song_ratings WHERE song_id = ? AND user_id = ? AND group_id = ? AND playlist_id = ?';
+        const args = [song_id, user_id, group_id, playlist_id];
+
+        try {
+            const result = await DB.execute({ sql, args });
+
+            return result.rows.length > 0;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    static async create(
+        song_id: string,
+        user_id: string,
+        group_id: number,
+        playlist_id: string,
+        rating: number
+    ): Promise<boolean> { 
+        const sql = 'INSERT INTO song_ratings (song_id, user_id, group_id, playlist_id, rating) VALUES (?, ?, ?, ?, ?)';
+        const args = [song_id, user_id, group_id, playlist_id, rating];
+
+        try {
+            await DB.execute({ sql, args });
+
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+}
+
+export default async function handler(request: VercelRequest, response: VercelResponse) {
+    try {
+        const {
+            song_id,
+            group_id: group_id_str,
+            playlist_id,
+            rating: rating_str
+        } = request.body;
+
+        const { access_token } = request.cookies;
+
+        const user = await User.getFromDiscordAccessToken(access_token);
+
+        const group_id = parseInt(group_id_str);
+        const rating = parseInt(rating_str);
+
+        if (!song_id || typeof song_id !== 'string') throw new Error('Invalid id');
+        if (!group_id || typeof group_id !== 'number') throw new Error('Invalid id');
+        if (!playlist_id || typeof playlist_id !== 'string') throw new Error('Invalid id');
+        if (!rating || typeof rating !== 'number') throw new Error('Invalid rating');
+
+        const hasRated = await Rating.hasRated(song_id, user.id, group_id, playlist_id);
+
+        if (hasRated) throw new Error('Already rated');
+
+        await Rating.create(song_id, user.id, group_id, playlist_id, rating);
+
+        response.redirect(`/group/${group_id}/playlist/${playlist_id}`);
+    } catch (error) {
+        console.error(error);
+        return response.status(400).json({ error: error.message });
+    }
+}

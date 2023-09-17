@@ -1,0 +1,37 @@
+---
+import Base from '@/layouts/Base.astro';
+import Playlist from '@/components/Playlist.astro';
+import GroupModel from '@models/group.js';
+
+const { user } = Astro.locals;
+
+if (!user) return Astro.redirect('/401');
+
+if (!Astro.params.group_id) return Astro.redirect('/404');
+
+const idParam = parseInt(Astro.params.group_id);
+
+const group = await GroupModel.getById(idParam);
+
+if (!group) return Astro.redirect('/404');
+
+const inGroup = await group.userInGroup(user);
+
+if (!inGroup) return Astro.redirect('/401');
+
+const { id, name } = group;
+
+const playlists = await group.getPlaylists();
+---
+<Base>
+  <h1>Group: {name}</h1>
+  <p>Group ID: {id}</p>
+
+  <form action={`/api/group/playlist/add`} method="POST">
+    <input type="hidden" name="group_id" value={id} />
+    <input type="text" name="playlist_id" placeholder="Spotify Playlist ID" />
+    <button type="submit">Add Playlist</button>
+  </form>
+
+  { user && playlists && playlists.map((playlist) => ( <Playlist playlist_id={playlist.playlist_id} group_id={playlist.group_id}  /> )) }
+</Base>

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import Discord from '../utils/discord.js';
-import User from '../utils/user.js';
+import Discord from '../../utils/discord.js';
+import User from '../../models/user.js';
 
 const discordAuthUrl = process.env.DISCORD_AUTH_URL || '';
 
@@ -29,12 +29,13 @@ export default async function handler(request: VercelRequest, response: VercelRe
         if (!spotifyId || !spotifyVerfied) throw new Error('Missing spotify connection or not verified');
 
         const user = await User.getFromSpotify(spotifyId);
+        await user.setInDB();
 
-        const data = { user, refresh_token };
+        response.setHeader('Set-Cookie', [
+            `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`,
+            `access_token=${access_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600;`
+        ]);
 
-        response.setHeader('Set-Cookie', `data=${JSON.stringify(data)}; path=/; HttpOnly; Secure; SameSite=Strict;`);
-
-        // set response to go to home page without using redirect
         response.write('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
         response.end();
     } catch (error) {

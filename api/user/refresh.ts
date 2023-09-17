@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Discord from '../utils/discord.js';
 import DataCookie from '../utils/data-cookie.js';
-import User from '../utils/user.js';
+import User from '../models/user.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {

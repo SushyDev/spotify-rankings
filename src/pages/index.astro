@@ -1,18 +1,21 @@
 ---
+import Base from '@/layouts/Base.astro'
+import Group from '@/components/group.astro'
+import GroupModel from '@models/group.js'
 
-import Navbar from '../components/navbar.astro'
+const user = Astro.locals.user
 
+const groups = user && await GroupModel.getAllByUser(user);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-		<Navbar />
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base>
+	<form action="/api/group/create" method="post">
+		<input type="text" name="name" placeholder="Group name" />
+		<input type="submit" value="Create group" />
+	</form>
+
+	<h1 class="mt-4 font-bold">Groups:</h1>
+	<ul>
+		{ user && groups && groups.map((group) => ( <Group id={group.id.toString()} name={group.name} /> )) }
+	</ul>
+</Base>

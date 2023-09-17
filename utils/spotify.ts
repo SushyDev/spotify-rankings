@@ -46,4 +46,23 @@ export default class Spotify {
 
         return await response.json();
     }
+
+    static async getPlaylistById(id: string) {
+        const { access_token } = await Spotify.getToken();
+
+        const response = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error(error);
+            throw new Error('Could not get Spotify playlist');
+        }
+
+        return await response.json();
+    }
 }
