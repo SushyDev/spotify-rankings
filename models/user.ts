@@ -43,9 +43,12 @@ export default class User {
 
         try {
             const result = await DB.execute({ sql, args });
-            const user = result[0];
+            const user = result.rows[0];
 
-            console.log(result);
+            if (!user) throw new Error('User not found');
+            if (typeof user.id !== 'string' || typeof user.name !== 'string' || typeof user.image !== 'string') {
+                throw new Error('Invalid user');
+            }
             
             return new User(user.id, user.name, user.image);
         } catch (error) {
