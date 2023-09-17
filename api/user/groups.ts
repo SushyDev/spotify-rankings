@@ -12,7 +12,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
         response.status(200).json(groups);
     } catch (error) {
         console.error(error);
-        return response.status(400).json({ error: error.message });
+        return response.status(400).json({ error: error });
     }
 }
 

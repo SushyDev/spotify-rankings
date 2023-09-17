@@ -10,6 +10,6 @@ export default function handler(request: VercelRequest, response: VercelResponse
         response.redirect('http://localhost:3000/');
     } catch (error) {
         console.error(error);
-        response.status(400).json({ error: error.message });
+        response.status(400).json({ error: error });
     }
 }

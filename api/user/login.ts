@@ -40,6 +40,6 @@ export default async function handler(request: VercelRequest, response: VercelRe
         response.end();
     } catch (error) {
         console.error(error);
-        response.status(400).json({ error: error.message });
+        response.status(400).json({ error: error });
     }
 }

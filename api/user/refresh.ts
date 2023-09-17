@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import Discord from '../utils/discord.js';
-import DataCookie from '../utils/data-cookie.js';
-import User from '../models/user.js';
+import Discord from '../../utils/discord.js';
+import DataCookie from '../../utils/data-cookie.js';
+import User from '../../models/user.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {
@@ -28,6 +28,6 @@ export default async function handler(request: VercelRequest, response: VercelRe
         response.redirect('http://localhost:3000/');
     } catch (error) {
         console.error(error);
-        return response.status(400).json({ error: error.message });
+        return response.status(400).json({ error: error });
     }
 }

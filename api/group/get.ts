@@ -10,11 +10,11 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
         const groupId = parseInt(id);
 
-        const group = await Group.getFromDB(groupId);
+        const group = await Group.getById(groupId);
 
         response.status(200).json(group);
     } catch (error) {
         console.error(error);
-        return response.status(400).json({ error: error.message });
+        return response.status(400).json({ error: error });
     }
 }
