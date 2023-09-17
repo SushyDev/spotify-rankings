@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import User from '@models/user.js';
-import Group from '@models/group.js';
+import User from '../../models/user.js';
+import Group from '../../models/group.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {

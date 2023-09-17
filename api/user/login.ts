@@ -4,13 +4,12 @@ import User from '../../models/user.js';
 
 const discordAuthUrl = process.env.DISCORD_AUTH_URL || '';
 
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+export default async function(request: VercelRequest, response: VercelResponse) {
     try {
         if (!request.url) throw new Error('Missing url');
 
         const url = new URL(request.url, 'http://0.0.0.0');
         const code = url.searchParams.get('code');
-        url.searchParams.delete('code');
 
         if (!code) {
             response.redirect(discordAuthUrl);
@@ -36,8 +35,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
             `access_token=${access_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600;`
         ]);
 
-        response.write('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
-        response.end();
+        response.send('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
     } catch (error) {
         console.error(error);
         response.status(400).json({ error: error });
