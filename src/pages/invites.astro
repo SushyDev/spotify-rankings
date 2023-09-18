@@ -1,0 +1,16 @@
+---
+const requestUrl = new URL(Astro.request.url)
+
+const inviteCodesString =requestUrl.searchParams.get('codes')
+
+if (!inviteCodesString) return Astro.redirect('/404');
+
+const inviteCodes = inviteCodesString.split(',');
+
+const inviteUrls = inviteCodes.map(invite => {
+	return `${requestUrl.origin}/api/group/invite/join?invite_code=${invite}`
+})
+---
+<ul>
+	{ inviteUrls.map((inviteUrl) => ( <li>{inviteUrl}</li> ))}
+</ul>

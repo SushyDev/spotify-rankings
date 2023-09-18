@@ -11,10 +11,7 @@ export default async function(request: VercelRequest, response: VercelResponse) 
         const url = new URL(request.url, 'http://0.0.0.0');
         const code = url.searchParams.get('code');
 
-        if (!code) {
-            response.redirect(discordAuthUrl);
-            return;
-        }
+        if (!code) return response.redirect(discordAuthUrl);
 
         const { access_token, refresh_token } = await Discord.getTokenFromCode(code)
         const connections = await Discord.getConnections(access_token);

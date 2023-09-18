@@ -1,27 +1,23 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+
 import User from '../../../models/user.js';
-import Group from '../../../models/group.js';
+import Invite from '../../../models/invite.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {
-        const { group_id, playlist_id } = request.body;
-
-        if (!group_id) throw new Error('Missing group_id');
-        if (!playlist_id) throw new Error('Missing spotify_playlist_id');
-
         if (!request.cookies.access_token) throw new Error('Missing access_token cookie');
 
         const user = await User.getFromDiscordAccessToken(request.cookies.access_token);
 
-        const group = await Group.getById(group_id);
+        const { invite_code } = request.query;
 
-        if (!group) throw new Error('Missing group');
+        if (!invite_code || typeof invite_code !== 'string') throw new Error('Invalid invite_code');
 
-        const userInGroup = await group.userInGroup(user);
+        const invite = await Invite.getByCode(invite_code);
 
-        if (!userInGroup) throw new Error('User is not in group');
+        if (!invite) throw new Error('Invalid invite_code');
 
-        await group.addPlaylist(playlist_id);
+        invite.use(user)
 
         response.write('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
         response.end();

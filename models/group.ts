@@ -1,5 +1,6 @@
 import type User from "./user.js";
 import DB from "../utils/db.js";
+import Invite from "./invite.js";
 
 export default class Group {
     id: number;
@@ -109,7 +110,6 @@ export default class Group {
 
         try {
             const result = await DB.execute({ sql, args });
-            console.log(result)
 
             return result.rows.length > 0;
         } catch (error) {
