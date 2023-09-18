@@ -24,38 +24,38 @@ const { id, name } = group;
 const playlists = await group.getPlaylists();
 ---
 <Base>
-  <h1>Group: {name}</h1>
-  <p>Group ID: {id}</p>
+  <div class="container mx-auto">
+    <div class="flex flex-wrap py-4 gap-4">
+      <div>
+        <h2>Add Playlist:</h2>
+        <div class="p-4 w-fit border border-blue-500">
+          <form action={`/api/group/playlist/add`} method="POST">
+            <input type="hidden" name="group_id" value={id} />
+            <input type="text" name="playlist_id" placeholder="Spotify Playlist ID" />
+            <br />
+            <button type="submit">Add Playlist</button>
+          </form>
+        </div>
+      </div>
 
-  <div class="flex">
-    <div class="p-4">
-      <h2>Add Playlist:</h2>
-      <div class="p-4 w-fit border border-blue-500">
-        <form action={`/api/group/playlist/add`} method="POST">
-          <input type="hidden" name="group_id" value={id} />
-          <input type="text" name="playlist_id" placeholder="Spotify Playlist ID" />
-          <br />
-          <button type="submit">Add Playlist</button>
-        </form>
+      <div>
+        <h2>Create invite:</h2>
+        <div class="p-4 w-fit border border-blue-500">
+          <form action={`/api/group/invite/create`} target="_blank" method="POST">
+            <input type="hidden" name="group_id" value={id} />
+            <input class="w-32" type="number" min="1" max="10" name="invite_count" placeholder="Invite Count" />
+            <br />
+            <button type="submit">Create Invite</button>
+          </form>
+        </div>
       </div>
     </div>
 
-    <div class="p-4">
-      <h2>Create invite:</h2>
-      <div class="p-4 w-fit border border-blue-500">
-        <form action={`/api/group/invite/create`} target="_blank" method="POST">
-          <input type="hidden" name="group_id" value={id} />
-          <input class="w-32" type="number" min="1" max="10" name="invite_count" placeholder="Invite Count" />
-          <br />
-          <button type="submit">Create Invite</button>
-        </form>
-      </div>
+    <div class="py-4">
+      <h2>Playlists:</h2>
+      { playlists.map((playlist) => ( 
+        <Playlist playlist={playlist} /> 
+      )) }
     </div>
-  </div>
-
-  <div class="p-4">
-    { playlists.map((playlist) => ( 
-      <Playlist playlist={playlist} /> 
-    )) }
   </div>
 </Base>

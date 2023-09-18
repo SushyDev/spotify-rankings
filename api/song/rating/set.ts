@@ -22,14 +22,14 @@ class Rating {
         }
     }
 
-    static async create(
+    static async set(
         song_id: string,
         user_id: string,
         group_id: number,
         playlist_id: string,
         rating: number
     ): Promise<boolean> { 
-        const sql = 'INSERT INTO song_ratings (song_id, user_id, group_id, playlist_id, rating) VALUES (?, ?, ?, ?, ?)';
+        const sql = 'INSERT OR REPLACE INTO song_ratings (song_id, user_id, group_id, playlist_id, rating) VALUES (?, ?, ?, ?, ?)';
         const args = [song_id, user_id, group_id, playlist_id, rating];
 
         try {
@@ -64,11 +64,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
         if (!playlist_id || typeof playlist_id !== 'string') throw new Error('Invalid id');
         if (!rating || typeof rating !== 'number') throw new Error('Invalid rating');
 
-        const hasRated = await Rating.hasRated(song_id, user.id, group_id, playlist_id);
-
-        if (hasRated) throw new Error('Already rated');
-
-        await Rating.create(song_id, user.id, group_id, playlist_id, rating);
+        await Rating.set(song_id, user.id, group_id, playlist_id, rating);
 
         response.redirect(`/group/${group_id}/playlist/${playlist_id}`);
     } catch (error) {

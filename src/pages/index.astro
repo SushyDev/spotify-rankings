@@ -9,15 +9,24 @@ const groups = user && await GroupModel.getAllByUser(user);
 ---
 
 <Base>
-	<form action="/api/group/create" method="post">
-		<input type="text" name="name" placeholder="Group name" />
-		<input type="submit" value="Create group" />
-	</form>
+	<div class="container mx-auto">
+		<div class="flex flex-wrap p-4 gap-4">
+			<div>
+				<h2>Create group:</h2>
+				<div class="p-4 w-fit border border-blue-500">
+					<form action="/api/group/create" method="post">
+						<input type="text" name="name" placeholder="Group name" />
+						<input type="submit" value="Create group" />
+					</form>
+				</div>
+			</div>
+		</div>
 
-	<h1 class="mt-4 font-bold">Groups:</h1>
-	<ul>
-		{ user && groups?.map((group) => (
-			<Group id={group.id.toString()} name={group.name} />
-		)) }
-	</ul>
+		<div class="p-4">
+			<h2>Groups:</h2>
+			{ groups?.map((group) => (
+				<Group id={group.id.toString()} name={group.name} />
+			)) }
+		</div>
+	</div>
 </Base>

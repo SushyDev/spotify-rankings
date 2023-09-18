@@ -29,6 +29,10 @@ if (!playlist) return Astro.redirect('/404');
 const { tracks } = playlist;
 ---
 <Base>
-    <h1 class="text-5xl text-gray-700 font-bold p-4 underline">{playlist.name}</h1>
-    { user && playlist && tracks && tracks.items.map(( { track }) => (<Song track={track} /> ))}
+    <div class="container mx-auto">
+        <h1 class="text-5xl font-bold py-4 underline">{playlist.name}</h1>
+        <div class="flex flex-col gap-2">
+            { tracks.items.map(( { track }) => (<Song track={track} /> ))}
+        </div>
+    </div>
 </Base>
