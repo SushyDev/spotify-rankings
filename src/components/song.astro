@@ -35,25 +35,29 @@ const ratings = await getRatings()
 const myRating = ratings.find((rating) => rating?.user_id === user.id)
 const averageRating = ratings.length > 0 ? ratings.reduce((acc, rating) => acc + (rating?.rating || 0), 0) / ratings.length : 'No ratings'
 ---
-<div class="p-2 flex border-b border-gray-700">
-    { image && <img src={ image } class="object-cover h-16 rounded-lg" /> }
-    <div class="pl-4">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-200">{ track.name }</h5>
-        <p class="font-normal text-gray-300">
-            { track.artists.map((artist) => (
-            <span class="inline-block mr-2 text-sm font-medium text-gray-700 dark:text-gray-400">{ artist.name }</span>
-            )) }
-        </p>
+<div class="p-2 grid md:grid-cols-3 justify-between gap-2 border-b border-gray-700">
+    <div class="flex gap-2 md:col-span-2">
+        { image && <img src={ image } class="object-cover h-16 rounded-lg" /> }
+        <div>
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-200">{ track.name }</h5>
+            <p class="font-normal text-gray-300">
+                { track.artists.map((artist) => (
+                    <span class="inline-block mr-2 text-sm font-medium text-gray-700 dark:text-gray-400">{ artist.name }</span>
+                )) }
+            </p>
+        </div>
     </div>
-    <div class="ml-auto">
-        <p>Average: { averageRating }</p>
-        <form action="/api/song/rating/set" method="post" class="flex gap-2">
-            <input type="hidden" name="song_id" value={ track.id } />
-            <input type="hidden" name="group_id" value={ groupId } />
-            <input type="hidden" name="playlist_id" value={ playlistId } />
-            <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:bg-blue-600" name="rating" min="1" max="10" value={ myRating?.rating || "0" }} />
-            { !Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-green-700 rounded">+</button> }
-            { Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-yellow-700 rounded">&</button> }
-        </form>
+    <div class="flex md:justify-end">
+        <div>
+            <p>Average: { averageRating }</p>
+            <form action="/api/song/rating/set" method="post" class="flex gap-2">
+                <input type="hidden" name="song_id" value={ track.id } />
+                <input type="hidden" name="group_id" value={ groupId } />
+                <input type="hidden" name="playlist_id" value={ playlistId } />
+                <input type="number" class=" w-32 px-2 bg-gray-700 rounded" name="rating" min="1" max="10" value={ myRating?.rating || "0" }} />
+                { !Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-green-700 rounded">+</button> }
+                { Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-yellow-700 rounded">&</button> }
+            </form>
+        </div>
     </div>
 </div>
