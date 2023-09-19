@@ -1,25 +1,41 @@
 import type { RequestContext } from '@vercel/edge';
- 
+import { next } from '@vercel/edge';
+import { RequestCookies } from '@edge-runtime/cookies'
+import Discord from './utils/discord.js';
+
 export const config = {
-  matcher: '/',
+  matcher: '/api/:path*'
 };
- 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
- 
-async function getProduct() {
-  const res = await fetch('https://api.vercel.app/products/1');
-  await wait(10000);
-  return res.json();
-}
- 
-export default function middleware(request: Request, context: RequestContext) {
-  context.waitUntil(getProduct().then((json) => console.log({ json })));
- 
-  return new Response(
-    JSON.stringify({ hello: 'world' }),
-    {
-      status: 200,
-      headers: { 'content-type': 'application/json' },
-    },
-  );
+
+const exludedPaths = [
+  '/api/user/login',
+  '/api/user/logout',
+];
+
+export default async function middleware(request: Request, _context: RequestContext) {
+  const requestUrl = new URL(request.url);
+  const headers = new Headers(request.headers);
+  const cookies = new RequestCookies(request.headers);
+
+  if (exludedPaths.includes(requestUrl.pathname)) {
+    return next({ headers, request });
+  }
+
+  if (!cookies.has('refresh_token')) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  const refreshToken = cookies.get('refresh_token')?.value;
+
+  if (!refreshToken) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  const { access_token, refresh_token } = await Discord.getTokenFromRefreshToken(refreshToken)
+
+  headers.append('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`);
+  headers.append('cookie', `refresh_token=${refresh_token}`);
+  headers.append('cookie', `access_token=${access_token}`);
+
+  return next({ headers, request });
 }

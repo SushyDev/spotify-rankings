@@ -30,7 +30,7 @@ export default async function(request: VercelRequest, response: VercelResponse) 
 
         response.setHeader('Set-Cookie', [
             `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`,
-            `access_token=${access_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600;`
+            `user=${JSON.stringify(user)}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`
         ]);
 
         response.send('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
