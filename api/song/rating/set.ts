@@ -54,6 +54,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
         const { access_token } = request.cookies;
 
+        console.info(`cookie`, request.cookies);
+
         const user = await User.getFromDiscordAccessToken(access_token);
 
         const group_id = parseInt(group_id_str);
