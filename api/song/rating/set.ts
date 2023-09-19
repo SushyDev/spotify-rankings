@@ -52,11 +52,15 @@ export default async function handler(request: VercelRequest, response: VercelRe
             rating: rating_str
         } = request.body;
 
-        const { access_token } = request.cookies;
+        const tokenHeader = request.headers['x-token']
 
-        console.info(`cookie`, request.cookies);
+        if (!tokenHeader || typeof tokenHeader !== 'string') {
+            throw new Error('Invalid access token');
+        }
 
-        const user = await User.getFromDiscordAccessToken(access_token);
+        const accessToken = tokenHeader.split('=')[1];
+
+        const user = await User.getFromDiscordAccessToken(accessToken);
 
         const group_id = parseInt(group_id_str);
         const rating = parseInt(rating_str);

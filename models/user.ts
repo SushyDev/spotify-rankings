@@ -14,7 +14,6 @@ export default class User {
     }
 
     static async getFromDiscordAccessToken(access_token: string): Promise<User> {
-        console.info('Getting user from discord access token', access_token);
         const connections = await Discord.getConnections(access_token);
         const connection = Discord.getSpotifyConnection(connections);
 

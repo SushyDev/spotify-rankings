@@ -33,8 +33,9 @@ export default async function middleware(request: Request, _context: RequestCont
 
   const { access_token, refresh_token } = await Discord.getTokenFromRefreshToken(refreshToken)
 
-  headers.append('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`);
-  headers.append('cookie', `access_token=${access_token}`);
+  headers.set('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`);
+
+  headers.append('X-Token', `access_token=${access_token}`);
 
   return next({ headers, request });
 }
