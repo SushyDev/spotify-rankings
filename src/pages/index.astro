@@ -9,7 +9,7 @@ const groups = user && await GroupModel.getAllByUser(user);
 ---
 
 <Base>
-	<div class="container mx-auto">
+	<div class="container mx-auto" class:list={user ? 'block' : 'hidden'}>
 		<div class="flex flex-wrap p-4 gap-4">
 			<div>
 				<h2>Create group:</h2>

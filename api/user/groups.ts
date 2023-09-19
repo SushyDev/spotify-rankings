@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import User from '../../models/user.js';
+import ErrorHandler from '../../utils/error-handling.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {
@@ -11,8 +12,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
         response.status(200).json(groups);
     } catch (error) {
-        console.error(error);
-        return response.status(400).json({ error: error });
+        if(!(error instanceof Error)) return;
+        ErrorHandler.handle(error, response);
     }
 }
 

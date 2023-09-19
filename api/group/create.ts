@@ -23,4 +23,3 @@ export default async function handler(request: VercelRequest, response: VercelRe
         return response.status(400).json({ error: error });
     }
 }
-

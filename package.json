@@ -18,6 +18,7 @@
     "tailwindcss": "^3.0.24"
   },
   "devDependencies": {
+    "@vercel/edge": "^1.0.2",
     "vercel": "^32.2.2"
   }
 }
