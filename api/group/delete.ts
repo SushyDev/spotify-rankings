@@ -6,17 +6,29 @@ import ErrorHandler from '../../utils/error-handling.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {
-        const { name } = request.body;
+        const { group_id } = request.body;
 
-        if (!name) throw new Error('Missing name');
+        if (!group_id) {
+            throw new Error('Missing group_id');
+        }
 
         const accessToken = Token.getFromHeaders(request.headers);
 
         const user = await User.getFromDiscordAccessToken(accessToken);
 
-        const group = await Group.create(name);
+        const group = await Group.getById(group_id);
 
-        await group.addUser(user);
+        if (!group) {
+            throw new Error('Missing group');
+        }
+
+        const userInGroup = await group.userInGroup(user);
+
+        if (!userInGroup) {
+            throw new Error('User is not in group');
+        }
+
+        await group.delete();
 
         response.write('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
         response.end();

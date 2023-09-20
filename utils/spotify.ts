@@ -1,3 +1,30 @@
+export namespace Spotify {
+    export interface Artist {
+        id: string;
+        name: string;
+    }
+
+    export interface Image {
+        url: string;
+    }
+
+    export interface Track {
+        id: string;
+        name: string;
+        artists: Artist[];
+        album: {
+            images: Image[];
+        }
+    }
+
+    export interface Playlist {
+        name: string;
+        tracks: {
+            items: { track: Track }[];
+        };
+    }
+}
+
 export default class Spotify {
     static clientID = process.env.SPOTIFY_CLIENT_ID;
     static clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -47,7 +74,7 @@ export default class Spotify {
         return await response.json();
     }
 
-    static async getPlaylistById(id: string) {
+    static async getPlaylistById(id: string): Promise<Spotify.Playlist> {
         const { access_token } = await Spotify.getToken();
 
         const response = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {

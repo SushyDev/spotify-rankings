@@ -15,8 +15,8 @@ const groups = user && await GroupModel.getAllByUser(user);
 				<h2>Create group:</h2>
 				<div class="p-4 w-fit border border-blue-500">
 					<form action="/api/group/create" method="post">
-						<input type="text" name="name" placeholder="Group name" />
-						<input type="submit" value="Create group" />
+						<input type="text" name="name" class="text-black" placeholder="Group name" />
+						<input type="submit" value="Create group" class="ml-2" />
 					</form>
 				</div>
 			</div>

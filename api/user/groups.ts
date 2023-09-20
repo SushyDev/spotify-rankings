@@ -13,6 +13,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
         response.status(200).json(groups);
     } catch (error) {
         if(!(error instanceof Error)) return;
+
         ErrorHandler.handle(error, response);
     }
 }

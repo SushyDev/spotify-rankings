@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import User from '../../models/user.js';
 import Discord from '../../utils/discord.js';
 import ErrorHandler from '../../utils/error-handling.js';
-import User from '../../models/user.js';
 
 const discordAuthUrl = process.env.DISCORD_AUTH_URL || '';
 
@@ -12,7 +12,9 @@ export default async function(request: VercelRequest, response: VercelResponse) 
         const url = new URL(request.url, 'http://0.0.0.0');
         const code = url.searchParams.get('code');
 
-        if (!code) return response.redirect(discordAuthUrl);
+        if (!code) {
+            return response.redirect(discordAuthUrl);
+        }
 
         const { access_token, refresh_token } = await Discord.getTokenFromCode(code)
         const connections = await Discord.getConnections(access_token);
@@ -36,6 +38,7 @@ export default async function(request: VercelRequest, response: VercelResponse) 
         response.send('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
     } catch (error) {
         if (!(error instanceof Error)) return;
+
         ErrorHandler.handle(error, response);
     }
 }

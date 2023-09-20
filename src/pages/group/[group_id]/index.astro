@@ -25,11 +25,12 @@ const playlists = await group.getPlaylists();
 ---
 <Base>
   <div class="container mx-auto">
+    <h1 class="text-4xl font-bold capitalize">{name}</h1>
     <div class="flex flex-wrap py-4 gap-4">
       <div>
         <h2>Add Playlist:</h2>
         <div class="p-4 w-fit border border-blue-500">
-          <form action={`/api/group/playlist/add`} method="POST">
+          <form action="/api/group/playlist/add" method="POST">
             <input type="hidden" name="group_id" value={id} />
             <input type="text" name="playlist_id" placeholder="Spotify Playlist ID" />
             <br />
@@ -49,13 +50,31 @@ const playlists = await group.getPlaylists();
           </form>
         </div>
       </div>
+
+      <div>
+        <h2>Delete Group:</h2>
+        <div class="p-4 w-fit border border-blue-500">
+          <form action="/api/group/delete" method="POST">
+            <input type="hidden" name="group_id" value={id} />
+            <button type="submit">Delete Group</button>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <h2>Leave Group:</h2>
+        <div class="p-4 w-fit border border-blue-500">
+          <form action="/api/group/leave" method="POST">
+            <input type="hidden" name="group_id" value={id} />
+            <button type="submit">Leave Group</button>
+          </form>
+        </div>
+      </div>
     </div>
 
     <div class="py-4">
       <h2>Playlists:</h2>
-      { playlists.map((playlist) => ( 
-        <Playlist playlist={playlist} /> 
-      )) }
+      { playlists.map((playlist) => ( <Playlist playlist={playlist} /> )) }
     </div>
   </div>
 </Base>

@@ -1,6 +1,5 @@
 import type User from "./user.js";
 import DB from "../utils/db.js";
-import Invite from "./invite.js";
 
 export default class Group {
     id: number;
@@ -15,106 +14,84 @@ export default class Group {
         const sql = "SELECT * FROM groups WHERE id IN (SELECT group_id FROM group_users WHERE user_id = ?);";
         const args = [user.id];
 
-        try {
-            const result = await DB.execute({ sql, args });
+        const result = await DB.execute({ sql, args });
 
-            if (result.rows.length === 0) return null;
+        if (result.rows.length === 0) return null;
 
-            return result.rows.map((row: any) => new Group(row.id, row.name));
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        return result.rows.map((row: any) => new Group(row.id, row.name));
     }
 
-    static async getById(id: number): Promise<Group | null> {
+    static async getById(group_id: number): Promise<Group | null> {
         const sql = "SELECT * FROM groups WHERE id = ?;";
-        const args = [id];
+        const args = [group_id];
 
-        try {
-            const result = await DB.execute({ sql, args });
+        const result = await DB.execute({ sql, args });
 
-            if (result.rows.length === 0) return null;
+        if (result.rows.length === 0) return null;
 
-            const { id, name } = result.rows[0]
+        const { id, name } = result.rows[0]
 
-            if (typeof id !== 'number' || typeof name !== 'string') {
-                throw new Error('Invalid id or name');
-            }
-
-            return new Group(id, name);
-        } catch (error) {
-            console.error(error);
-            throw error;
+        if (typeof id !== 'number' || typeof name !== 'string') {
+            throw new Error('Invalid id or name');
         }
+
+        return new Group(id, name);
     }
 
     static async create(name: string): Promise<Group> {
         const sql = "INSERT INTO groups (name) VALUES (?);";
         const args = [name];
 
-        try {
-            const result = await DB.execute({ sql, args });
+        const result = await DB.execute({ sql, args });
 
-            return new Group(Number(result.lastInsertRowid), name);
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        return new Group(Number(result.lastInsertRowid), name);
+    }
+
+    async delete() {
+        const sql = "DELETE FROM groups WHERE id = ?;";
+        const args = [this.id];
+
+        return DB.execute({ sql, args });
     }
 
     async addUser(user: User) {
-        const sql = "INSERT INTO group_users (group_id, user_id) VALUES (?, ?);";
-        const args = [this.id, user.id];
+        const sql = "INSERT INTO group_users (user_id, group_id) VALUES (?, ?);";
+        const args = [user.id, this.id];
 
-        try {
-            return DB.execute({ sql, args });
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        return DB.execute({ sql, args });
     }
 
     async addPlaylist(playlist_id: string) {
         const sql = "INSERT INTO group_playlists (playlist_id, group_id) VALUES (?, ?);";
         const args = [playlist_id, this.id];
 
-        try {
-            return DB.execute({ sql, args });
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        return DB.execute({ sql, args });
     }
 
-    // TODO: Remove any
+    async deletePlaylist(playlist_id: string) {
+        const sql = "DELETE FROM group_playlists WHERE playlist_id = ? AND group_id = ?;";
+        const args = [playlist_id, this.id];
+
+        return DB.execute({ sql, args });
+    }
+
     async getPlaylists(): Promise<Record<string, any>[]> {
         const sql = "SELECT * FROM group_playlists WHERE group_id = ?;";
         const args = [this.id];
 
-        try {
-            const result = await DB.execute({ sql, args });
+        const result = await DB.execute({ sql, args });
 
-            if (result.rows.length === 0) return [];
+        if (result.rows.length === 0) return [];
 
-            return result.rows;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        return result.rows;
     }
 
     async userInGroup(user: User): Promise<boolean> {
         const sql = "SELECT * FROM group_users WHERE group_id = ? AND user_id = ?;";
         const args = [this.id, user.id];
 
-        try {
-            const result = await DB.execute({ sql, args });
+        const result = await DB.execute({ sql, args });
 
-            return result.rows.length > 0;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        return result.rows.length > 0;
     }
 }

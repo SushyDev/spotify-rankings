@@ -32,7 +32,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
             throw new Error('User is not in group');
         }
 
-        await group.addPlaylist(playlist_id);
+        await group.deletePlaylist(playlist_id);
 
         return response.redirect(`/group/${group_id}`);
     } catch (error) {

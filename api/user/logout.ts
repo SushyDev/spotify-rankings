@@ -11,6 +11,7 @@ export default function handler(_request: VercelRequest, response: VercelRespons
         response.send('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
     } catch (error) {
         if (!(error instanceof Error)) return;
+
         ErrorHandler.handle(error, response);
     }
 }

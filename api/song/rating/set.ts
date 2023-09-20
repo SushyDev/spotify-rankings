@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import User from '../../../models/user.js';
 import DB from '../../../utils/db.js';
+import ErrorHandler from '../../../utils/error-handling.js';
 
 class Rating {
     static async hasRated(
@@ -74,7 +75,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
         response.redirect(`/group/${group_id}/playlist/${playlist_id}`);
     } catch (error) {
-        console.error(error);
-        return response.status(400).json({ error: error });
+        if (!(error instanceof Error)) return;
+
+        ErrorHandler.handle(error, response);
     }
 }

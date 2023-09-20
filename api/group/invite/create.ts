@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
 import Invite from '../../../models/invite.js';
+import ErrorHandler from '../../../utils/error-handling.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     try {
@@ -23,7 +23,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
         response.redirect(`/invites?codes=${urlEncodedInvites}`);
     } catch (error) {
-        console.error(error);
-        return response.status(400).json({ error: error });
+        if (!(error instanceof Error)) return;
+
+        ErrorHandler.handle(error, response);
     }
 }

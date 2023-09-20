@@ -1,16 +1,23 @@
 ---
 import DB from '@utils/db.js'
+import type { Spotify } from '@utils/spotify.js'
 
 const { user } = Astro.locals
 
 if (!user) return Astro.redirect('/401')
+
+interface Props {
+    track: Spotify.Track
+}
 
 const { track } = Astro.props
 
 const groupId = Astro.params.group_id
 const playlistId = Astro.params.playlist_id
 
-const image = track?.album?.images[1]?.url
+if (!groupId || !playlistId) return Astro.redirect('/401')
+
+const image = track.album.images[1].url
 
 const sql = 'SELECT * FROM `song_ratings` WHERE `song_id` = ? AND `group_id` = ? AND `playlist_id` = ?'
 const args = [track.id, groupId, playlistId]
@@ -39,7 +46,7 @@ const averageRating = ratings.length > 0 ? ratings.reduce((acc, rating) => acc +
     <div class="flex gap-2 md:col-span-2">
         { image && <img src={ image } class="object-cover h-16 rounded-lg" /> }
         <div>
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-200">{ track.name }</h5>
+            <h5 class="mb-2 text-2xl font-bold tracking-tight">{ track.name }</h5>
             <p class="font-normal text-gray-300">
                 { track.artists.map((artist) => (
                     <span class="inline-block mr-2 text-sm font-medium text-gray-700 dark:text-gray-400">{ artist.name }</span>
@@ -54,9 +61,9 @@ const averageRating = ratings.length > 0 ? ratings.reduce((acc, rating) => acc +
                 <input type="hidden" name="song_id" value={ track.id } />
                 <input type="hidden" name="group_id" value={ groupId } />
                 <input type="hidden" name="playlist_id" value={ playlistId } />
-                <input type="number" class=" w-32 px-2 bg-gray-700 rounded" name="rating" min="1" max="10" value={ myRating?.rating || "0" }} />
-                { !Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-green-700 rounded">+</button> }
-                { Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-yellow-700 rounded">&</button> }
+                <input type="number" class=" w-32 px-2 bg-gray-200 rounded" name="rating" min="1" max="10" value={ myRating?.rating || "0" }} />
+                { !Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-green-500 rounded">+</button> }
+                { Boolean(myRating) && <button type="submit" class="px-4 py-2 bg-yellow-500 rounded">&</button> }
             </form>
         </div>
     </div>
