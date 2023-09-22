@@ -31,11 +31,17 @@ export default async function middleware(request: Request, _context: RequestCont
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { access_token, refresh_token, expires_in } = await Discord.getTokenFromRefreshToken(refreshToken)
+  try {
+    const { access_token, refresh_token, expires_in } = await Discord.getTokenFromRefreshToken(refreshToken)
 
-  headers.set('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in};`);
+    headers.set('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in};`);
+    headers.append('X-Token', `access_token=${access_token}`);
 
-  headers.append('X-Token', `access_token=${access_token}`);
+    return next({ headers, request });
+  } catch (error) {
+    console.error(error);
 
-  return next({ headers, request });
+    const redirect = '<html><head><meta http-equiv="refresh" content="0; url=/api/user/login"></head></html>'
+    return new Response(redirect, { status: 302, headers: { 'Content-Type': 'text/html' } });
+  }
 }
