@@ -31,9 +31,9 @@ export default async function middleware(request: Request, _context: RequestCont
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { access_token, refresh_token } = await Discord.getTokenFromRefreshToken(refreshToken)
+  const { access_token, refresh_token, expires_in } = await Discord.getTokenFromRefreshToken(refreshToken)
 
-  headers.set('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`);
+  headers.set('Set-Cookie', `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in};`);
 
   headers.append('X-Token', `access_token=${access_token}`);
 

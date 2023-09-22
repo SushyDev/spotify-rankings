@@ -58,11 +58,20 @@ export default class User {
     }
 
     setInDB() {
-        const sql = "INSERT OR REPLACE INTO users (id, name, image) VALUES (?, ?, ?);";
         const args = [this.id, this.name, this.image];
+        const batch = [
+            { 
+                sql: "INSERT OR IGNORE INTO users (id, name, image) VALUES (?, ?, ?);",
+                args,
+            },
+            {
+                sql: "UPDATE users SET name = ?, image = ? WHERE id = ?;",
+                args,
+            }
+        ]
 
         try {
-            return DB.execute({ sql, args });
+            return DB.batch(batch);
         } catch (error) {
             console.error(error);
             throw error;

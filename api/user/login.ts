@@ -16,7 +16,7 @@ export default async function(request: VercelRequest, response: VercelResponse) 
             return response.redirect(discordAuthUrl);
         }
 
-        const { access_token, refresh_token } = await Discord.getTokenFromCode(code)
+        const { access_token, refresh_token, expires_in } = await Discord.getTokenFromCode(code)
         const connections = await Discord.getConnections(access_token);
         const connection = Discord.getSpotifyConnection(connections);
 
@@ -31,8 +31,8 @@ export default async function(request: VercelRequest, response: VercelResponse) 
         await user.setInDB();
 
         response.setHeader('Set-Cookie', [
-            `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`,
-            `user=${JSON.stringify(user)}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000;`
+            `refresh_token=${refresh_token}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in};`,
+            `user=${JSON.stringify(user)}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in};`
         ]);
 
         response.send('<html><head><meta http-equiv="refresh" content="0; url=/"></head></html>');
