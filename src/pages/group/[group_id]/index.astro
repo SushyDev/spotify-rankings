@@ -2,6 +2,7 @@
 import Base from '@/layouts/Base.astro';
 import Playlist from '@/components/Playlist.astro';
 import GroupModel from '@models/group.js';
+import Spotify from '@utils/spotify';
 
 const { user } = Astro.locals;
 
@@ -22,6 +23,11 @@ if (!inGroup) return Astro.redirect('/401');
 const { id, name } = group;
 
 const playlists = await group.getPlaylists();
+
+for (const playlist of playlists) {
+  const data = await Spotify.getPlaylistById(playlist.playlist_id);
+  Object.assign(playlist, data);
+}
 ---
 <Base>
   <div class="container mx-auto">

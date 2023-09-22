@@ -1,17 +1,16 @@
 ---
 type Playlist = Record<string, any>;
 
-
 interface Props extends Playlist {}
 
 const { playlist } = Astro.props;
 
-const { group_id, playlist_id } = playlist;
+const { group_id, playlist_id, name } = playlist;
 
 const playlistUrl = `/group/${group_id}/playlist/${playlist_id}`;
 ---
 <li id={playlist_id}>
     <a class="text-blue-500 underline" href={playlistUrl}>
-        {playlist_id}
+        {name}
     </a>
 </li>

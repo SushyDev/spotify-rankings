@@ -6,10 +6,6 @@ import GroupModel from '@models/group.js'
 const user = Astro.locals.user
 
 const groups = user && await GroupModel.getAllByUser(user);
-
-const randValue = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-Astro.response.headers.set('Cache-Control', `public, max-age=${60 * 60}, s-maxage=${60 * 60}`);
 ---
 
 <Base>
@@ -17,8 +13,6 @@ Astro.response.headers.set('Cache-Control', `public, max-age=${60 * 60}, s-maxag
 		<div class="flex flex-wrap p-4 gap-4">
 			<div>
 				<h2>Create group:</h2>
-
-				{ randValue }
 				<div class="p-4 w-fit border border-blue-500">
 					<form action="/api/group/create" method="post">
 						<input type="text" name="name" class="text-black" placeholder="Group name" />
