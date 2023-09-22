@@ -9,7 +9,7 @@ const groups = user && await GroupModel.getAllByUser(user);
 
 const randValue = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=60');
+Astro.response.headers.set('Cache-Control', `public, max-age=${60 * 60}, s-maxage=${60 * 60}`);
 ---
 
 <Base>
