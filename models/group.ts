@@ -1,4 +1,4 @@
-import type User from "./user.js";
+import User from "./user.js";
 import DB from "../utils/db.js";
 
 export default class Group {
@@ -8,17 +8,6 @@ export default class Group {
     constructor(id: number, name: string) {
         this.id = id;
         this.name = name;
-    }
-
-    static async getAllByUser(user: User): Promise<Group[] | null> {
-        const sql = "SELECT * FROM groups WHERE id IN (SELECT group_id FROM group_users WHERE user_id = ?);";
-        const args = [user.id];
-
-        const result = await DB.execute({ sql, args });
-
-        if (result.rows.length === 0) return null;
-
-        return result.rows.map((row: any) => new Group(row.id, row.name));
     }
 
     static async getById(group_id: number): Promise<Group | null> {
@@ -86,12 +75,23 @@ export default class Group {
         return result.rows;
     }
 
-    async userInGroup(user: User): Promise<boolean> {
+    async containsUser(user: User): Promise<boolean> {
         const sql = "SELECT * FROM group_users WHERE group_id = ? AND user_id = ?;";
         const args = [this.id, user.id];
 
         const result = await DB.execute({ sql, args });
 
         return result.rows.length > 0;
+    }
+
+    async getUsers(): Promise<User[]> { 
+        const sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM group_users WHERE group_id = ?);";
+        const args = [this.id];
+
+        const result = await DB.execute({ sql, args });
+
+        if (result.rows.length === 0) return [];
+
+        return result.rows.map((row: any) => new User(row.id, row.name, row.image));
     }
 }

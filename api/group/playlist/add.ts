@@ -26,13 +26,17 @@ export default async function handler(request: VercelRequest, response: VercelRe
             throw new Error('Missing group');
         }
 
-        const userInGroup = await group.userInGroup(user);
+        const userInGroup = await group.containsUser(user);
 
         if (!userInGroup) {
             throw new Error('User is not in group');
         }
 
-        await group.addPlaylist(playlist_id);
+        const promises = Array.isArray(playlist_id)
+            ? playlist_id.map(id => group.addPlaylist(id))
+            : [group.addPlaylist(playlist_id)];
+
+        await Promise.all(promises);
 
         return response.redirect(`/group/${group_id}`);
     } catch (error) {

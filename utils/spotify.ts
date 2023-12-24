@@ -18,6 +18,7 @@ export namespace Spotify {
     }
 
     export interface Playlist {
+        id: string;
         name: string;
         tracks: {
             items: { track: Track }[];
@@ -86,10 +87,30 @@ export default class Spotify {
 
         if (!response.ok) {
             const error = await response.json();
-            console.error(error);
+            console.error(error, id);
             throw new Error('Could not get Spotify playlist');
         }
 
         return await response.json();
+    }
+
+    static async getAllPlaylistsByUserId(id: string): Promise<Spotify.Playlist[]> {
+        const { access_token } = await Spotify.getToken();
+
+        const response = await fetch(`https://api.spotify.com/v1/users/${id}/playlists`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error(error);
+            throw new Error('Could not get Spotify playlists');
+        }
+
+        const data = await response.json();
+        return data.items;
     }
 }

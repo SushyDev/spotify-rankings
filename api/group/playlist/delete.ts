@@ -26,7 +26,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
             throw new Error('Missing group');
         }
 
-        const userInGroup = await group.userInGroup(user);
+        const userInGroup = await group.containsUser(user);
 
         if (!userInGroup) {
             throw new Error('User is not in group');

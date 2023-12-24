@@ -1,11 +1,10 @@
 ---
 import Base from '@/layouts/Base.astro'
 import Group from '@/components/Group.astro'
-import GroupModel from '@models/group.js'
 
 const user = Astro.locals.user
 
-const groups = user && await GroupModel.getAllByUser(user);
+const groups = user && await user.getGroups();
 ---
 
 <Base>
@@ -13,7 +12,7 @@ const groups = user && await GroupModel.getAllByUser(user);
 		<div class="flex flex-wrap p-4 gap-4">
 			<div>
 				<h2>Create group:</h2>
-				<div class="p-4 w-fit border border-blue-500">
+				<div class="w-fit">
 					<form action="/api/group/create" method="post">
 						<input type="text" name="name" class="text-black" placeholder="Group name" />
 						<input type="submit" value="Create group" class="ml-2" />
@@ -23,10 +22,12 @@ const groups = user && await GroupModel.getAllByUser(user);
 		</div>
 
 		<div class="p-4">
-			<h2>Groups:</h2>
-			{ groups?.map((group) => (
-				<Group id={group.id.toString()} name={group.name} />
-			)) }
+			<h2 class="text-2xl font-semibold">Your groups:</h2>
+			<ul class="list-none flex flex-col w-fit">
+				{ groups?.map((group) => (
+					<Group id={group.id.toString()} name={group.name} />
+				)) }
+			</ul>
 		</div>
 	</div>
 </Base>

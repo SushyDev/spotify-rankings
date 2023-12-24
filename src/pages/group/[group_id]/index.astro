@@ -1,7 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import Playlist from '@/components/Playlist.astro';
-import GroupModel from '@models/group.js';
+import Group from '@models/group.js';
 import Spotify from '@utils/spotify';
 
 const { user } = Astro.locals;
@@ -12,11 +12,11 @@ if (!Astro.params.group_id) return Astro.redirect('/404');
 
 const idParam = parseInt(Astro.params.group_id);
 
-const group = await GroupModel.getById(idParam);
+const group = await Group.getById(idParam);
 
 if (!group) return Astro.redirect('/404');
 
-const inGroup = await group.userInGroup(user);
+const inGroup = await group.containsUser(user);
 
 if (!inGroup) return Astro.redirect('/401');
 
@@ -28,25 +28,32 @@ for (const playlist of playlists) {
   const data = await Spotify.getPlaylistById(playlist.playlist_id);
   Object.assign(playlist, data);
 }
+
+const usersInGroup = await group.getUsers();
+
+const isLastUser = usersInGroup.length === 1;
 ---
 <Base>
-  <div class="container mx-auto">
+  <div class="container mx-auto px-4 md:px-0">
+
+    <span class="breadcrumb flex gap-1 my-2">
+      <a href="/" class="text-blue-500 hover:text-blue-600">Home</a>
+      <span>/</span>
+      <span>{name}</span>
+    </span>
+
     <h1 class="text-4xl font-bold capitalize">{name}</h1>
     <div class="flex flex-wrap py-4 gap-4">
-      <div>
-        <h2>Add Playlist:</h2>
-        <div class="p-4 w-fit border border-blue-500">
-          <form action="/api/group/playlist/add" method="POST">
-            <input type="hidden" name="group_id" value={id} />
-            <input type="text" name="playlist_id" placeholder="Spotify Playlist ID" />
-            <br />
-            <button type="submit">Add Playlist</button>
-          </form>
-        </div>
+      <div class="flex flex-col gap-4">
+        <a href={`/group/${id}/playlist/add`} class="block text-center bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Playlists</a>
+
+        <form action="/api/group/delete" method="POST">
+          <input type="hidden" name="group_id" value={id} />
+          <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete Group</button>
+        </form>
       </div>
 
       <div>
-        <h2>Create invite:</h2>
         <div class="p-4 w-fit border border-blue-500">
           <form action={`/api/group/invite/create`} target="_blank" method="POST">
             <input type="hidden" name="group_id" value={id} />
@@ -58,29 +65,41 @@ for (const playlist of playlists) {
       </div>
 
       <div>
-        <h2>Delete Group:</h2>
-        <div class="p-4 w-fit border border-blue-500">
-          <form action="/api/group/delete" method="POST">
-            <input type="hidden" name="group_id" value={id} />
-            <button type="submit">Delete Group</button>
-          </form>
+      </div>
+
+      { !isLastUser && (
+        <div>
+          <div class="p-4 w-fit border border-blue-500">
+            <form action="/api/group/leave" method="POST">
+              <input type="hidden" name="group_id" value={id} />
+              <button type="submit">Leave Group</button>
+            </form>
+          </div>
         </div>
+      ) }
+    </div>
+
+    <div class="flex flex-wrap gap-6">
+      <div>
+        <h2>Playlists:</h2>
+        <ul class="list-none flex flex-col">
+          { playlists.map((playlist) => ( <Playlist playlist={playlist} /> )) }
+        </ul>
       </div>
 
       <div>
-        <h2>Leave Group:</h2>
-        <div class="p-4 w-fit border border-blue-500">
-          <form action="/api/group/leave" method="POST">
-            <input type="hidden" name="group_id" value={id} />
-            <button type="submit">Leave Group</button>
-          </form>
-        </div>
+        <h2>Users:</h2>
+        <ul class="list-none flex flex-col">
+          { usersInGroup.map((user) => (
+          <li id={user.id} class="my-2">
+            <div class="flex flex-wrap gap-4 pr-6">
+              <img class="w-12 h-12 rounded-full" src={user.image} alt={user.name} />
+              <span class="place-self-center">{user.name}</span>
+            </div>
+          </li>
+        )) }
+        </ul>
       </div>
-    </div>
-
-    <div class="py-4">
-      <h2>Playlists:</h2>
-      { playlists.map((playlist) => ( <Playlist playlist={playlist} /> )) }
     </div>
   </div>
 </Base>

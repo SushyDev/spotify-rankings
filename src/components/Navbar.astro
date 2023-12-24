@@ -5,15 +5,15 @@ const isAuth = Boolean(user)
 ---
 
 <nav class="border-gray-200 bg-green-500 py-4">
-    <div class="container mx-auto flex justify-between w-full">
+    <div class="container mx-auto px-4 md:px-0 flex justify-between w-full">
         <a href="/" class="flex items-center">
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-black">Spotify Ranking</span>
         </a>
         <div class:list={[ 'flex items-center', { hidden: isAuth } ]}>
-            <a href="/api/user/login" class="text-sm  text-blue-600 text-blue-500 hover:underline">Login</a>
+            <a href="/api/user/login" class="text-sm hover:underline font-semibold">Login</a>
         </div>
         <div class:list={[ 'flex items-center', { hidden: !isAuth } ]}>
-            <a href="/api/user/logout" class="text-sm  text-blue-600 text-black hover:underline">Logout</a>
+            <a href="/api/user/logout" class="text-sm  text-red-600 font-semibold hover:underline">Logout</a>
 
             <div class="flex items-center ml-4">
                 <span class="mr-2 text-black text-sm font-semibold">{user?.name}</span>

@@ -9,8 +9,12 @@ interface Props extends Group {}
 const { id, name } = Astro.props
 
 const groupUrl = `/group/${id}`
+const groupImg = `https://api.dicebear.com/7.x/shapes/svg?seed=${id}&backgroundType=gradientLinear`
 ---
 
-<li id={id}>
-    <a class="text-blue-500 underline" href={groupUrl}>{name}</a>
+<li id={id} class="my-2 bg-gray-600 rounded-md overflow-hidden hover:bg-gray-500">
+    <a class="flex flex-wrap gap-4 pr-6" href={groupUrl}>
+        <img class="w-20 h-20" src={groupImg} alt={name} />
+        <span class="place-self-center p-2">{name}</span>
+    </a>
 </li>

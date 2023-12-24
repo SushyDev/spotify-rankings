@@ -9,8 +9,9 @@ const { group_id, playlist_id, name } = playlist;
 
 const playlistUrl = `/group/${group_id}/playlist/${playlist_id}`;
 ---
-<li id={playlist_id}>
-    <a class="text-blue-500 underline" href={playlistUrl}>
-        {name}
+<li id={playlist_id} class="my-2 bg-gray-600 rounded-md overflow-hidden hover:bg-gray-500">
+    <a class="flex flex-wrap gap-4 pr-6" href={playlistUrl}>
+        <img class="w-20 h-20" src={playlist.images[0].url} alt={name} />
+        <span class="place-self-center p-2">{name}</span>
     </a>
 </li>

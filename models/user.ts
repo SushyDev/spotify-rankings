@@ -1,5 +1,6 @@
 import Discord from '../utils/discord.js';
 import Spotify from '../utils/spotify.js';
+import Group from './group.js';
 import DB from '../utils/db.js';
 
 export default class User {
@@ -78,14 +79,16 @@ export default class User {
         }
     }
 
-    async getGroups() {
+    async getGroups(): Promise<Group[] | null> {
         const sql = "SELECT groups.id, groups.name FROM groups INNER JOIN group_users ON groups.id = group_users.group_id WHERE group_users.user_id = ?;";
         const args = [this.id];
 
         try {
             const result = await DB.execute({ sql, args });
 
-            return result.rows
+            if (result.rows.length === 0) return null;
+
+            return result.rows.map((row: any) => new Group(row.id, row.name));
         } catch (error) {
             console.error(error);
             throw error;
