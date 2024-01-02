@@ -15,6 +15,9 @@ export namespace Spotify {
         album: {
             images: Image[];
         }
+        external_urls: {
+            spotify: string;
+        }
     }
 
     export interface Playlist {
